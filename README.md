@@ -2,9 +2,8 @@
 
 ## Status
 
-**Stage**: 0
-
-**Champion**: None currently
+- **Stage**: 0
+- **Champion**: None currently
 
 ## Summary
 
