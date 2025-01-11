@@ -1,50 +1,37 @@
-# template-for-proposals
+# TC39 Proposal: Dereference from Prototype Only
 
-A repository template for ECMAScript proposals.
+## Status
 
-## Before creating a proposal
+**Stage**: 0
+**Champion**: None yet
 
-Please ensure the following:
-  1. You have read the [process document](https://tc39.github.io/process-document/)
-  1. You have reviewed the [existing proposals](https://github.com/tc39/proposals/)
-  1. You are aware that your proposal requires being a member of TC39, or locating a TC39 delegate to “champion” your proposal
+## Summary
 
-## Create your proposal repo
+Proposal for a new operator which performs property dereference, but ignores the surface level ("own" properties) of the property chain.
 
-Follow these steps:
-  1. Click the green [“use this template”](https://github.com/tc39/template-for-proposals/generate) button in the repo header. (Note: Do not fork this repo in GitHub's web interface, as that will later prevent transfer into the TC39 organization)
-  1. Update ecmarkup and the biblio to the latest version: `npm install --save-dev ecmarkup@latest && npm install --save-dev --save-exact @tc39/ecma262-biblio@latest`.
-  1. Go to your repo settings page:
-      1. Under “General”, under “Features”, ensure “Issues” is checked, and disable “Wiki”, and “Projects” (unless you intend to use Projects)
-      1. Under “Pull Requests”, check “Always suggest updating pull request branches” and “automatically delete head branches”
-      1. Under the “Pages” section on the left sidebar, and set the source to “deploy from a branch”, select “gh-pages” in the branch dropdown, and then ensure that “Enforce HTTPS” is checked.
-      1. Under the “Actions” section on the left sidebar, under “General”, select “Read and write permissions” under “Workflow permissions” and click “Save”
-  1. [“How to write a good explainer”][explainer] explains how to make a good first impression.
+Example:
+```
+const obj = { a: 1 };
+console.log(obj..a);        // undefined
+console.log(obj..toString); // [Function: toString]
+```
 
-      > Each TC39 proposal should have a `README.md` file which explains the purpose
-      > of the proposal and its shape at a high level.
-      >
-      > ...
-      >
-      > The rest of this page can be used as a template ...
+## Motivation
 
-      Your explainer can point readers to the `index.html` generated from `spec.emu`
-      via markdown like
+Javascript's `Object` type is used extremely ubiquitously, and in practice serves the purpose of both the C-style `struct`, as well as the python-style `dict`. Unfortunately, common operations on this ubiquitous type cannot effectively be implemented on `Object.prototype`. Objects can have a large number of dynamically assigned properties, and hence convenient patterns such as `myObject.hasOwnProperty(...)` cannot be relied on, as the term "hasOwnProperty" may have been set as an "own" property, masking the reference to `Object.prototype.hasOwnProperty`. (We see cases of `{}.hasOwnProperty.call(myObject, ...)` instead!)
 
-      ```markdown
-      You can browse the [ecmarkup output](https://ACCOUNT.github.io/PROJECT/)
-      or browse the [source](https://github.com/ACCOUNT/PROJECT/blob/HEAD/spec.emu).
-      ```
+I believe Javascript would benefit greatly from utility methods available on `Object.prototype`. Some example utility methods (*shown **only** to illustrate the potential of "prototype-only-dereferencing"; these example utilities are **not** part of this proposal*):
 
-      where *ACCOUNT* and *PROJECT* are the first two path elements in your project's Github URL.
-      For example, for github.com/**tc39**/**template-for-proposals**, *ACCOUNT* is “tc39”
-      and *PROJECT* is “template-for-proposals”.
+```
+const myObject = { a: 1, b: 2 };
+console.log(myObject..map(v => v + 1)); // { a: 2, b: 3 }
+```
 
+```
+const myObject = { a: { b: { c: 1 } } };
+console.log(myObject..at('z')); // undefined
+console.log(myObject..at('a')); // { b: { c: 1 } }
+console.log(myObject..at([ 'a', 'b', 'c' ])); // 1
+```
 
-## Maintain your proposal repo
-
-  1. Make your changes to `spec.emu` (ecmarkup uses HTML syntax, but is not HTML, so I strongly suggest not naming it “.html”)
-  1. Any commit that makes meaningful changes to the spec, should run `npm run build` to verify that the build will succeed and the output looks as expected.
-  1. Whenever you update `ecmarkup`, run `npm run build` to verify that the build will succeed and the output looks as expected.
-
-  [explainer]: https://github.com/tc39/how-we-work/blob/HEAD/explainer.md
+By allowing developer-friendly access to object prototype properties without fear of masking, we enable a future of utility functions to be defined on one of Javascript's most well-used types.
