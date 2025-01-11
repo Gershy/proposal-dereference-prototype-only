@@ -34,4 +34,4 @@ console.log(myObject..at('a')); // { b: { c: 1 } }
 console.log(myObject..at([ 'a', 'b', 'c' ])); // 1
 ```
 
-By allowing developer-friendly access to object prototype properties without fear of masking, we enable a future of utility functions to be defined on one of Javascript's most well-used types.
+By allowing developer-friendly access to object prototype properties without fear of masking, we enable a future where one of Javascript's most well-used types is supported by a host of utilities defined on the prototype.
