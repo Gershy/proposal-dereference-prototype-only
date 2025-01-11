@@ -18,7 +18,7 @@ console.log(obj..toString); // [Function: toString]
 
 ## Motivation
 
-Javascript's `Object` type is used extremely ubiquitously, and in practice serves the purpose of both the C-style `struct`, as well as the python-style `dict`. Unfortunately, common operations on this ubiquitous type cannot effectively be implemented on `Object.prototype`. Objects can have a large number of dynamically assigned properties, and hence convenient patterns such as `myObject.hasOwnProperty(...)` cannot be relied on, as the term "hasOwnProperty" may have been set as an "own" property, masking the reference to `Object.prototype.hasOwnProperty`. (We see cases of `{}.hasOwnProperty.call(myObject, ...)` instead!)
+Javascript's `Object` type is used extremely ubiquitously, and in practice serves the purpose of both the C-style `struct`, as well as the python-style `dict`. Unfortunately, common operations on this ubiquitous type cannot effectively be implemented on `Object.prototype`. Objects can have a large number of dynamically assigned properties, and hence convenient patterns such as `myObject.hasOwnProperty(...)` cannot be relied on, as the term "hasOwnProperty" may have been set as an "own" property, masking the reference to `Object.prototype.hasOwnProperty`. (We unfortunately see `{}.hasOwnProperty.call(myObject, ...)` used instead!)
 
 I believe Javascript would benefit greatly from utility methods available on `Object.prototype`. Some example utility methods (*shown **only** to illustrate the potential of "prototype-only-dereferencing"; these example utilities are **not** part of this proposal*):
 
